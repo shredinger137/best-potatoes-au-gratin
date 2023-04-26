@@ -7,13 +7,13 @@ function App() {
   const [count, setCount] = useState(0);
 
   const articleRef = useRef(articles);
-  const setArticlesRef = data => {
+  const setArticlesRef = (data: any) => {
     articleRef.current = data;
     setArticles(data);
   }
 
   const countRef = useRef(count);
-  const setCountRef = data => {
+  const setCountRef = (data: any) => {
     countRef.current = data;
     setCount(data);
   }
@@ -36,14 +36,14 @@ function App() {
 
     window.addEventListener('scroll', () => {
       if (window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - document.getElementById('recipe').clientHeight) {
+        document.documentElement.scrollHeight - document.getElementById('recipe')!.clientHeight) {
         getNewText();
       }
     })
   }, [])
 
   const fillScreen = () => {
-    if (document.getElementById('container').clientHeight < window.innerHeight) {
+    if (document.getElementById('container')!.clientHeight < window.innerHeight) {
     }
   }
 
