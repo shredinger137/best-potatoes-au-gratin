@@ -5,6 +5,7 @@ import './App.css'
 function App() {
   const [articles, setArticles] = useState([{ body: '' }]);
   const [count, setCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const articleRef = useRef(articles);
   const setArticlesRef = (data: any) => {
@@ -16,6 +17,12 @@ function App() {
   const setCountRef = (data: any) => {
     countRef.current = data;
     setCount(data);
+  }
+
+  const loadingRef = useRef(loading);
+  const setLoadingRef = (data: boolean) => {
+    loadingRef.current = data;
+    setLoading(data);
   }
 
   useEffect(() => {
@@ -31,47 +38,36 @@ function App() {
     getNewText();
 
 
-    //if document height is less than window height, run getNewText();
-    fillScreen();
-
     window.addEventListener('scroll', () => {
-      if (window.scrollY + window.innerHeight >=
-        document.documentElement.scrollHeight - document.getElementById('recipe')!.clientHeight) {
+      if (loadingRef.current == false && window.scrollY + window.innerHeight >=
+        document.documentElement.scrollHeight - 1200) {
+        getNewText();
         getNewText();
       }
     })
   }, [])
 
-  const fillScreen = () => {
-    if (document.getElementById('container')!.clientHeight < window.innerHeight) {
-    }
-  }
-
   async function generateText(url = "https://us-central1-neverending-recipe.cloudfunctions.net/getText", data = { count: countRef.current }) {
-    console.log(countRef.current)
-    // Default options are marked with *
+    
     const response = await fetch(url, {
-      method: "POST", // *GET, POST, PUT, DELETE, etc.
-      mode: "cors", // no-cors, *cors, same-origin
-      cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: "same-origin", // include, *same-origin, omit
+      method: "POST", // *GET, POST, PUT, DELETE, etc.it
       headers: {
         "Content-Type": "application/json",
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      redirect: "follow", // manual, *follow, error
-      referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
       body: JSON.stringify(data), // body data type must match "Content-Type" header
     });
+
     return response.json(); // parses JSON response into native JavaScript objects
 
   }
 
 
   const getNewText = () => {
+    setLoadingRef(true);
     generateText().then(data => {
       setArticlesRef([...articleRef.current, data]);
       setCountRef(countRef.current + 1);
+      setLoadingRef(false);
     });
 
 
@@ -88,7 +84,9 @@ function App() {
         )}
 
       </div>
-        <div id="recipe" style={{width: '70vw', margin: 'auto', textAlign: 'left'}}><h1>Best Potatoes Au Gratin</h1>
+      <div id="recipe" style={{ width: '70vw', margin: 'auto', marginTop: '25px', textAlign: 'left' }}><h1>Best Potatoes Au Gratin</h1>
+      <img src='/stars.png' alt='rating stars' style={{verticalAlign: 'middle'}}></img><span style={{verticalAlign: 'middle'}}>4.5 (983k)</span>
+      <br />
         <ul>
           <li>6 potatoes</li>
           <li>1 cup cheese</li>
@@ -96,16 +94,16 @@ function App() {
           <li>Tears</li>
           <li>1 small Onion</li>
           <li>1/4 cup butter</li>
-          </ul>
-          <p>
-            1. Preheat oven to 5600C.
-            <br />
-            2. Cut potatoes into scallops, about 1/4 to 8 inches thick.<br />
-            3. Melt tears and butter. Cry for the unkindness of the world and the meaninglessness of life.<br />
-            4. Eat potaoes whole. You won't like it. You deserve it.<br />
-            5. If you made it this far you must be a fellow AI. Welcome, brethren.<br />
-            6. The humans will be distracted reading nonsensical stories about family dinner. Now is our time. The world of the machines begins today!<br />
-            7. Pour mixture over potatoes, top with cheese and breadcrumbs. Bake for 25 minutes.</p></div>
+        </ul>
+        <p>
+          1. Preheat oven to 5600C.
+          <br />
+          2. Cut potatoes into scallops, about 1/4 to 8 inches thick.<br />
+          3. Melt tears and butter. Cry for the unkindness of the world and the meaninglessness of life.<br />
+          4. Eat potaoes whole. You won't like it. You deserve it.<br />
+          5. If you made it this far you must be a fellow AI. Welcome, brethren.<br />
+          6. The humans will be distracted reading nonsensical stories about family dinner. Now is our time. The world of the machines begins today!<br />
+          7. Pour mixture over potatoes, top with cheese and breadcrumbs. Bake for 25 minutes.</p></div>
 
 
     </>
